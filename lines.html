@@ -65,15 +65,18 @@
         }
 
         function buildLineGeo(x, y) {
+
             let origin = new THREE.Vector2(0, 0)
             let target = new THREE.Vector2(120, 0)
             let line = new THREE.Shape();
-            line.moveTo(origin.x, origin.y);
+            let arrowSize=5
+            line.moveTo(origin.x, origin.y+1);
+            line.lineTo(target.x-arrowSize, target.y+1);
+            line.lineTo(target.x-arrowSize, target.y+arrowSize);
             line.lineTo(target.x, target.y);
-            line.lineTo(target.x + 5, target.y);
-            line.lineTo(target.x + 2.5, target.y + 5);
-            line.lineTo(target.x, target.y + 2);
-            line.lineTo(origin.x, origin.y + 2);
+            line.lineTo(target.x-arrowSize, target.y-arrowSize);
+            line.lineTo(target.x-arrowSize, target.y-1);
+            line.lineTo(origin.x, origin.y -1);
             // line.lineTo(80, 20); // close path
             var geometry = new THREE.ShapeGeometry(line);
             var material = new THREE.MeshBasicMaterial({
@@ -91,9 +94,9 @@
         function addLines() {
             lines = []
             console.log(lines)
-            for (let i = 000; i < 110000; i++) {
-                let meshline = buildLineReal(i, i)
-                // let meshline = buildLineGeo(i, i)
+            for (let i = 000; i < 10000; i++) {
+                // let meshline = buildLineReal(i, i)
+                let meshline = buildLineGeo(i, i)
                 lines.push(meshline)
                 // scene.add(line)
             }
@@ -109,6 +112,9 @@
         function changeLine() {
             for (const line of lines) {
                 line.rotateZ(0.1)
+                line.scale.x+=0.005
+                // line.position.x-=0.01
+                // line.scale.set(1,1,line.scale.z++)
                 // line.position.set(line.position.x + 0.1, line.position.y + 1, line.position.z)
             }
         }
