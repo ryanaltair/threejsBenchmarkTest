@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>three.js webgl - tons of</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <style>
+        body {
+            padding: 0;
+            margin: 0;
+            font-weight: bold;
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body>
+    <script src="/node_modules/aframe/dist/aframe-master.js"></script>
+    <script src="node_modules/aframe-orbit-controls/dist/aframe-orbit-controls.js"></script>
+
+    <script>
+        var camera, scene, renderer, mesh, material, control, lines;
+        var drawStartPos = new THREE.Vector2();
+        init();
+        addLines()
+        animate();
+        setInterval(changeLine, 20)
+
+        function init() {
+            camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 5000);
+            camera.position.z = 500;
+            scene = new THREE.Scene();
+            renderer = new THREE.WebGLRenderer({
+                antialias: true
+            });
+            control = new THREE.OrbitControls(camera);
+            // controls.autoRotate=true
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+            window.addEventListener('resize', onWindowResize, false);
+        }
+
+        function buildLineReal(x, y) {
+            var material = new THREE.LineBasicMaterial({
+                color: 0xffffff,
+                linewidth:2
+            });
+
+            var geometry = new THREE.Geometry();
+            geometry.vertices.push(
+                new THREE.Vector3(0, 0, 0),
+                new THREE.Vector3(100, 1, 0),
+                new THREE.Vector3(0, 0, 0)
+            );
+
+            var mesh = new THREE.Line(geometry, material);
+            mesh.position.x = x
+            mesh.position.y = y
+            mesh.rotateZ(x)
+            // lines.push(mesh)
+            scene.add(mesh);
+            return mesh
+        }
+
+        function buildLineGeo(x, y) {
+            let origin = new THREE.Vector2(0, 0)
+            let target = new THREE.Vector2(120, 0)
+            let line = new THREE.Shape();
+            line.moveTo(origin.x, origin.y);
+            line.lineTo(target.x, target.y);
+            line.lineTo(target.x + 5, target.y);
+            line.lineTo(target.x + 2.5, target.y + 5);
+            line.lineTo(target.x, target.y + 2);
+            line.lineTo(origin.x, origin.y + 2);
+            // line.lineTo(80, 20); // close path
+            var geometry = new THREE.ShapeGeometry(line);
+            var material = new THREE.MeshBasicMaterial({
+                color: 0xffffff
+            });
+            let mesh = new THREE.Mesh(geometry, material);
+            mesh.position.x = x
+            mesh.position.y = y
+            mesh.rotateZ(x)
+            // lines.push(mesh)
+            scene.add(mesh);
+            return mesh
+        }
+
+        function addLines() {
+            lines = []
+            console.log(lines)
+            for (let i = 000; i < 110000; i++) {
+                let meshline = buildLineReal(i, i)
+                // let meshline = buildLineGeo(i, i)
+                lines.push(meshline)
+                // scene.add(line)
+            }
+
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        function changeLine() {
+            for (const line of lines) {
+                line.rotateZ(0.1)
+                // line.position.set(line.position.x + 0.1, line.position.y + 1, line.position.z)
+            }
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+
+            // mesh.rotation.x += 0.01;
+            // mesh.rotation.y += 0.01;
+            renderer.render(scene, camera);
+        }
+    </script>
+</body>
+
+</html>
